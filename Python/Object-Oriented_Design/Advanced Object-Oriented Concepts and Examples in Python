@@ -1,0 +1,314 @@
+#zad1
+from abc import ABC, abstractmethod
+
+class InterfaceDraw(ABC):
+    @abstractmethod
+    def draw(self):
+        pass
+
+class InterfaceSound(ABC):
+    @abstractmethod
+    def play(self):
+        pass
+
+class Shape(ABC):
+    def __init__(self, color):
+        self.color = color
+
+    @abstractmethod
+    def calc_area(self):
+        pass
+
+    @abstractmethod
+    def calc_circuit(self):
+        pass
+
+class Triangle(Shape, InterfaceDraw):
+    def __init__(self, color, a, h):
+        super().__init__(color)
+        self.a = a
+        self.h = h
+
+    def calc_area(self):
+        return 0.5 * self.a * self.h
+
+    def calc_circuit(self):
+        return self.a * 3
+
+    def draw(self):
+        print("Drawing a triangle")
+
+class Circle(Shape, InterfaceDraw, InterfaceSound):
+    def __init__(self, color, radius):
+        super().__init__(color)
+        self.radius = radius
+
+    def calc_area(self):
+        return 3.14 * (self.radius ** 2)
+
+    def calc_circuit(self):
+        return 2 * 3.14 * self.radius
+
+    def draw(self):
+        print("Drawing a circle")
+
+    def play(self):
+        print("Playing circle sound")
+
+class Quadrangle(Shape):
+    def __init__(self, color, a, b):
+        super().__init__(color)
+        self.a = a
+        self.b = b
+
+    def calc_area(self):
+        return self.a * self.b
+
+    def calc_circuit(self):
+        return 2 * (self.a + self.b)
+
+class Square(Quadrangle, InterfaceDraw):
+    def __init__(self, color, a):
+        super().__init__(color, a, a)
+
+    def draw(self):
+        print("Drawing a square")
+
+class Rectangle(Quadrangle, InterfaceDraw):
+    def __init__(self, color, a, b):
+        super().__init__(color, a, b)
+
+    def draw(self):
+        print("Drawing a rectangle")
+
+# Przykładowe użycie klas
+shapes = [Circle("red", 5), Triangle("blue", 3, 4), Square("green", 2), Rectangle("purple", 3, 5)]
+for shape in shapes:
+    print(f"Shape color: {shape.color}")
+    print(f"Shape area: {shape.calc_area()}")
+    print(f"Shape circuit: {shape.calc_circuit()}")
+    if isinstance(shape, InterfaceDraw):
+        shape.draw()
+    if isinstance(shape, InterfaceSound):
+        shape.play()
+    print()
+
+
+
+
+#zad2
+from abc import ABC, abstractmethod
+
+class InterfaceDraw(ABC):
+    @abstractmethod
+    def draw(self):
+        pass
+
+class InterfaceSound(ABC):
+    @abstractmethod
+    def play(self):
+        pass
+
+class Shape(ABC):
+    @abstractmethod
+    def calc_area(self):
+        pass
+    
+    @abstractmethod
+    def calc_circuit(self):
+        pass
+
+class Triangle(Shape, InterfaceDraw, InterfaceSound):
+    def __init__(self, a, h):
+        self.a = a
+        self.h = h
+    
+    def calc_area(self):
+        return 0.5 * self.a * self.h
+    
+    def calc_circuit(self):
+        return 3 * self.a
+    
+    def draw(self):
+        print("Drawing a triangle")
+    
+    def play(self):
+        print("Playing a sound for a triangle")
+
+triangle = Triangle(4, 5)
+triangle.play()
+
+#zad3
+from abc import ABC, abstractmethod
+from multipledispatch import dispatch
+
+
+class Person(ABC):
+    def __init__(self, name="", age=0):
+        self.name = name
+        self.age = age
+
+    @abstractmethod
+    def display_details(self):
+        pass
+
+    @abstractmethod
+    def check_age(self):
+        pass
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+
+class Student(Person):
+    def __init__(self, name="", age=0, index_nr=0):
+        super().__init__(name, age)
+        self.index_nr = index_nr
+
+    @dispatch()
+    def display_details(self):
+        print(f"Name: {self.name}, Age: {self.age}, Index number: {self.index_nr}")
+
+    @dispatch(str)
+    def display_details(self, additional_info):
+        print(f"Name: {self.name}, Age: {self.age}, Index number: {self.index_nr}, {additional_info}")
+
+    def check_age(self):
+        return True
+
+
+class Driver(Person):
+    def __init__(self, name="", age=0, driver_license=""):
+        super().__init__(name, age)
+        self.driver_license = driver_license
+
+    @dispatch()
+    def display_details(self):
+        print(f"Name: {self.name}, Age: {self.age}, Driver's license number: {self.driver_license}")
+
+    @dispatch(str)
+    def display_details(self, additional_info):
+        print(f"Name: {self.name}, Age: {self.age}, Driver's license number: {self.driver_license}, {additional_info}")
+
+    def check_age(self):
+        return self.age >= 16
+
+    def driving(self):
+        print("Driving")
+
+    def parking(self):
+        print("Parking")
+
+
+class Employee(Person):
+    def __init__(self, name="", age=0, salary=0):
+        super().__init__(name, age)
+        self.salary = salary
+
+    @dispatch()
+    def display_details(self):
+        print(f"Name: {self.name}, Age: {self.age}, Salary: {self.salary}")
+
+    @dispatch(str)
+    def display_details(self, additional_info):
+        print(f"Name: {self.name}, Age: {self.age}, Salary: {self.salary}, {additional_info}")
+
+    def check_age(self):
+        return self.age >= 14
+
+    def check_salary(self):
+        print(f"Salary: {self.salary}")
+
+
+class Accountant(Employee):
+    def __init__(self, name="", age=0, salary=0):
+        super().__init__(name, age, salary)
+
+    def bookkeeping(self):
+        print("Bookkeeping")
+
+
+class Manager(Employee):
+    def __init__(self, name="", age=0, salary=0):
+        super().__init__(name, age, salary)
+
+    def set_salary(self, salary):
+        self.salary = salary
+
+
+emp_list = [
+Employee("John Smith", 25, 3000),
+Employee("Mary Johnson", 35, 4000),
+Employee("Bob Lee", 20, 2000),
+Employee("Alice Brown", 30, 3500),
+Employee("David Wilson", 28, 3200)
+]
+
+emp_list.sort()
+
+for emp in emp_list:
+emp.display_details()
+print()
+
+
+#zad4
+class BankAccount:
+    def __init__(self, account_number, balance):
+        self.account_number = account_number
+        self.balance = balance
+
+    def deposit(self, amount):
+        self.balance += amount
+
+    def check_balance(self):
+        print(f"Balance of account {self.account_number} is {self.balance}")
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print("Insufficient funds")
+        else:
+            self.balance -= amount
+            print(f"Withdrawal of {amount} from account {self.account_number}")
+
+class SavingsAccount(BankAccount):
+    def __init__(self, account_number, balance, interest_rate):
+        super().__init__(account_number, balance)
+        self.interest_rate = interest_rate
+
+    def add_interest(self):
+        interest = self.balance * self.interest_rate
+        self.balance += interest
+        print(f"Added interest of {interest} to account {self.account_number}")
+
+    def print_customer_details(self):
+        print(f"Account Number: {self.account_number}")
+        print(f"Balance: {self.balance}")
+        print(f"Interest Rate: {self.interest_rate}")
+
+class CheckingAccount(BankAccount):
+    def __init__(self, account_number, balance, overdraft_limit):
+        super().__init__(account_number, balance)
+        self.overdraft_limit = overdraft_limit
+
+    def withdraw(self, amount):
+        if amount > (self.balance + self.overdraft_limit):
+            print("Insufficient funds")
+        else:
+            self.balance -= amount
+            print(f"Withdrawal of {amount} from account {self.account_number}")
+
+    def print_customer_details(self):
+        print(f"Account Number: {self.account_number}")
+        print(f"Balance: {self.balance}")
+        print(f"Overdraft Limit: {self.overdraft_limit}")
+
+savings_account = SavingsAccount(123456789, 1000, 0.05)
+savings_account.print_customer_details() # wyświetla Account Number, Balance oraz Interest Rate
+savings_account.add_interest() # dodaje odsetki do konta
+savings_account.check_balance() # sprawdza stan konta
+
+checking_account = CheckingAccount(987654321, 500, 1000)
+checking_account.print_customer_details() # wyświetla Account Number, Balance oraz Overdraft Limit
+checking_account.withdraw(700) # próba wypłaty większej niż saldo na koncie i overdraft limit
+checking_account.withdraw(800) # wypłata mniejszej niż suma salda i overdraft limit
+checking_account.check_balance() # sprawdzenie stanu konta po wypłacie
