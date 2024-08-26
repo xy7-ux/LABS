@@ -1,2 +1,2 @@
 # LABS
-Place for keep my uni projects.
+A place to keep my university projects.
