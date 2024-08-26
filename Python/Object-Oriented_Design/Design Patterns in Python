@@ -1,0 +1,280 @@
+#Design Patterns in Python
+
+#1
+class Event:
+    def __init__(self):
+        self.observers = []
+
+    def register(self, observer):
+        self.observers.append(observer)
+
+    def unregister(self, observer):
+        self.observers.remove(observer)
+
+    def notify(self, data=None):
+        for observer in self.observers:
+            observer.update(data)
+
+
+class Observer:
+    def update(self, data):
+        pass
+
+
+# Przykładowa implementacja obiektu obserwowanego
+class Subject:
+    def __init__(self):
+        self.event = Event()
+
+    def do_something(self):
+        # Wykonaj jakieś działanie
+        # ...
+
+        # Powiadom obserwatorów o zdarzeniu
+        self.event.notify("Zdarzenie wystąpiło")
+
+
+# Przykładowa implementacja obserwatora
+class ExampleObserver(Observer):
+    def update(self, data):
+        print(f"Otrzymano powiadomienie: {data}")
+
+
+# Użycie wzorca Obserwatora w prostym systemie zdarzeń
+subject = Subject()
+
+observer1 = ExampleObserver()
+observer2 = ExampleObserver()
+
+# Rejestracja obserwatorów do zdarzenia
+subject.event.register(observer1)
+subject.event.register(observer2)
+
+# Wywołanie akcji, która spowoduje powiadomienie obserwatorów
+subject.do_something()
+
+# Wyrejestrowanie jednego z obserwatorów
+subject.event.unregister(observer2)
+
+# Ponowne wywołanie akcji
+subject.do_something()
+
+
+#2
+# Klasa reprezentująca kontekst, w którym wybierane są różne strategie
+class Context:
+    def __init__(self, strategy):
+        self.strategy = strategy
+
+    def set_strategy(self, strategy):
+        self.strategy = strategy
+
+    def execute_strategy(self):
+        self.strategy.execute()
+
+
+# Interfejs strategii
+class Strategy:
+    def execute(self):
+        pass
+
+
+# Implementacje strategii
+class ConcreteStrategyA(Strategy):
+    def execute(self):
+        print("Wykonuję strategię A")
+
+
+class ConcreteStrategyB(Strategy):
+    def execute(self):
+        print("Wykonuję strategię B")
+
+
+class ConcreteStrategyC(Strategy):
+    def execute(self):
+        print("Wykonuję strategię C")
+
+
+# Użycie wzorca Strategii
+context = Context(ConcreteStrategyA())  # Inicjalizacja kontekstu z domyślną strategią
+
+context.execute_strategy()  # Wykonanie strategii A
+
+context.set_strategy(ConcreteStrategyB())  # Zmiana strategii na B
+context.execute_strategy()  # Wykonanie strategii B
+
+context.set_strategy(ConcreteStrategyC())  # Zmiana strategii na C
+context.execute_strategy()  # Wykonanie strategii C
+
+
+
+
+
+#3
+# Klasa bazowa definiująca szkielet algorytmu
+class AbstractClass:
+    def template_method(self):
+        self.step_1()
+        self.step_2()
+        self.step_3()
+
+    def step_1(self):
+        raise NotImplementedError
+
+    def step_2(self):
+        raise NotImplementedError
+
+    def step_3(self):
+        raise NotImplementedError
+
+
+# Klasa pochodna implementująca konkretne kroki algorytmu
+class ConcreteClass(AbstractClass):
+    def step_1(self):
+        print("Wykonuję krok 1")
+
+    def step_2(self):
+        print("Wykonuję krok 2")
+
+    def step_3(self):
+        print("Wykonuję krok 3")
+
+
+# Użycie wzorca Metody Szablonowej
+obj = ConcreteClass()
+obj.template_method()
+
+
+
+
+
+#4
+# Interfejs polecenia
+class Command:
+    def execute(self):
+        pass
+
+    def undo(self):
+        pass
+
+
+# Implementacje konkretnych poleceń
+class LightOnCommand(Command):
+    def __init__(self, light):
+        self.light = light
+
+    def execute(self):
+        self.light.on()
+
+    def undo(self):
+        self.light.off()
+
+
+class LightOffCommand(Command):
+    def __init__(self, light):
+        self.light = light
+
+    def execute(self):
+        self.light.off()
+
+    def undo(self):
+        self.light.on()
+
+
+# Obiekt odbiorcy
+class Light:
+    def on(self):
+        print("Światło włączone")
+
+    def off(self):
+        print("Światło wyłączone")
+
+
+# Obiekt wywoływający (invoker)
+class RemoteControl:
+    def __init__(self):
+        self.commands = []
+        self.undo_command = None
+
+    def set_command(self, command):
+        self.commands.append(command)
+
+    def button_pressed(self):
+        if self.commands:
+            command = self.commands.pop()
+            command.execute()
+            self.undo_command = command
+
+    def undo_button_pressed(self):
+        if self.undo_command:
+            self.undo_command.undo()
+
+
+# Użycie wzorca Polecenie
+light = Light()
+
+light_on_command = LightOnCommand(light)
+light_off_command = LightOffCommand(light)
+
+remote_control = RemoteControl()
+remote_control.set_command(light_on_command)
+remote_control.set_command(light_off_command)
+
+remote_control.button_pressed()  # Włączenie światła
+remote_control.button_pressed()  # Wyłączenie światła
+
+remote_control.undo_button_pressed()  # Cofnięcie wyłączenia światła
+remote_control.undo_button_pressed()  # Cofnięcie włączenia światła
+
+
+
+
+
+#5
+# Abstrakcyjna klasa Handler
+class Handler:
+    def __init__(self, successor=None):
+        self.successor = successor
+
+    def handle_request(self, request):
+        pass
+
+
+# Konkretna klasa HandlerA
+class ConcreteHandlerA(Handler):
+    def handle_request(self, request):
+        if request == "A":
+            print("ConcreteHandlerA obsłużył żądanie")
+        elif self.successor is not None:
+            self.successor.handle_request(request)
+
+
+# Konkretna klasa HandlerB
+class ConcreteHandlerB(Handler):
+    def handle_request(self, request):
+        if request == "B":
+            print("ConcreteHandlerB obsłużył żądanie")
+        elif self.successor is not None:
+            self.successor.handle_request(request)
+
+
+# Konkretna klasa HandlerC
+class ConcreteHandlerC(Handler):
+    def handle_request(self, request):
+        if request == "C":
+            print("ConcreteHandlerC obsłużył żądanie")
+        elif self.successor is not None:
+            self.successor.handle_request(request)
+
+
+# Użycie wzorca łańcuch zobowiązań
+handler_a = ConcreteHandlerA()
+handler_b = ConcreteHandlerB()
+handler_c = ConcreteHandlerC()
+
+handler_a.successor = handler_b
+handler_b.successor = handler_c
+
+handler_a.handle_request("B")  # ConcreteHandlerB obsłużył żądanie
+handler_a.handle_request("C")  # ConcreteHandlerC obsłużył żądanie
+handler_a.handle_request("D")  # Żadne z handlerów nie obsłużyło żądania
