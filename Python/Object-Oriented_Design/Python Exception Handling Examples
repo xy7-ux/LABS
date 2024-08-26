@@ -1,0 +1,206 @@
+#1
+try:
+    liczba1 = float(input("Podaj pierwszą liczbę: "))
+    liczba2 = float(input("Podaj drugą liczbę: "))
+
+    wynik = liczba1 / liczba2
+
+    print("Wynik dzielenia: ", wynik)
+
+except ZeroDivisionError:
+    print("Błąd: Druga liczba nie może być zerem!")
+
+#2
+try:
+    liczba = int(input("Podaj liczbę całkowitą: "))
+    print("Wprowadzona liczba:", liczba)
+
+except ValueError:
+    print("Błąd: Wprowadzono niepoprawną wartość!")
+
+
+#3
+try:
+    nazwa_pliku = input("Podaj nazwę pliku: ")
+    with open(nazwa_pliku, 'r') as plik:
+        zawartosc = plik.read()
+        print("Zawartość pliku:")
+        print(zawartosc)
+
+except FileNotFoundError:
+    print("Błąd: Plik nie istnieje!")
+
+
+#4
+try:
+    nazwa_pliku = input("Podaj nazwę pliku: ")
+    with open(nazwa_pliku, 'r') as plik:
+        zawartosc = plik.read()
+        print("Zawartość pliku:")
+        print(zawartosc)
+
+except FileNotFoundError:
+    print("Błąd: Plik nie istnieje!")
+
+except PermissionError:
+    print("Błąd: Brak uprawnień do dostępu do pliku!")
+
+
+#5
+class DivideByZeroError(Exception):
+    pass
+
+
+def divide_elements(lista):
+    wyniki = []
+    for element in lista:
+        try:
+            wynik = 1 / element
+            wyniki.append(wynik)
+        except ZeroDivisionError:
+            raise DivideByZeroError("Błąd: Dzielenie przez zero!")
+    return wyniki
+
+
+# Przykład użycia
+dane_wejsciowe = [1, 2, 0, 4, 5]
+try:
+    wyniki = divide_elements(dane_wejsciowe)
+    print("Wyniki dzielenia:", wyniki)
+except DivideByZeroError as e:
+    print(e)
+
+
+#6
+oceny_uczniow = {
+    'Jan Kowalski': 4.5,
+    'Anna Nowak': 5.0,
+    'Piotr Zieliński': 3.0,
+    'Maria Lewandowska': 4.0
+}
+
+nazwisko = input("Podaj nazwisko ucznia: ")
+
+try:
+    ocena = oceny_uczniow[nazwisko]
+    print(f"Ocena ucznia {nazwisko}: {ocena}")
+except KeyError:
+    print("Błąd: Podane nazwisko ucznia nie zostało znalezione.")
+
+
+#7
+lista = input("Podaj listę liczb (oddzielone spacją): ").split()
+indeks = input("Podaj indeks elementu do wyświetlenia: ")
+
+try:
+    indeks = int(indeks)
+    element = lista[indeks]
+    print("Wybrany element:", element)
+except IndexError:
+    print("Błąd: Podany indeks jest poza zakresem.")
+except ValueError:
+    print("Błąd: Podany indeks nie jest liczbą.")
+
+
+#8
+import math
+
+class NegativeNumberError(Exception):
+    pass
+
+def oblicz_pierwiastek_kwadratowy(liczba):
+    if liczba < 0:
+        raise NegativeNumberError("Błąd: Podana liczba jest ujemna.")
+    else:
+        return math.sqrt(liczba)
+
+try:
+    liczba = float(input("Podaj liczbę dodatnią: "))
+    pierwiastek = oblicz_pierwiastek_kwadratowy(liczba)
+    print("Pierwiastek kwadratowy z", liczba, "to", pierwiastek)
+except ValueError:
+    print("Błąd: Podana wartość nie jest liczbą.")
+except NegativeNumberError as e:
+    print(e)
+
+#9
+try:
+    liczba1 = float(input("Podaj pierwszą liczbę: "))
+    liczba2 = float(input("Podaj drugą liczbę: "))
+
+    wynik = liczba1 / liczba2
+
+    print("Wynik dzielenia:", wynik)
+
+except ValueError:
+    print("Błąd: Podana wartość nie jest liczbą.")
+
+except ZeroDivisionError:
+    print("Błąd: Dzielenie przez zero.")
+
+except NameError:
+    print("Błąd: Zmienna użyta w obliczeniach nie jest zdefiniowana.")
+
+
+#10
+try:
+    # Otwarcie pliku w trybie odczytu
+    with open("plik.txt", "r") as plik:
+        # Odczytanie zawartości pliku
+        zawartosc = plik.read()
+
+        # Wykonanie operacji na danych
+        wynik = len(zawartosc)
+
+        # Wyświetlenie wyniku
+        print("Wynik operacji:", wynik)
+
+except FileNotFoundError:
+    print("Błąd: Plik nie został znaleziony.")
+
+except IOError:
+    print("Błąd: Wystąpił błąd wejścia/wyjścia.")
+
+else:
+    print("Operacje zostały wykonane bez błędów.")
+
+finally:
+    # Zamknięcie pliku niezależnie od tego, czy wystąpił błąd czy nie
+    plik.close()
+
+
+
+#11
+import csv
+
+try:
+    with open("dane_uczniow.csv", "r") as plik:
+        czytnik = csv.reader(plik)
+
+        for wiersz in czytnik:
+            try:
+                # Przykład operacji na danych
+                imie = wiersz[0]
+                nazwisko = wiersz[1]
+                wiek = int(wiersz[2])
+
+                # Wyświetlenie danych
+                print("Imię:", imie)
+                print("Nazwisko:", nazwisko)
+                print("Wiek:", wiek)
+                print()
+
+            except IndexError:
+                print("Błąd: Brak wystarczających danych w wierszu.")
+
+            except ValueError:
+                print("Błąd: Nieprawidłowy format wieku.")
+
+except FileNotFoundError:
+    print("Błąd: Plik nie został znaleziony.")
+
+except IOError:
+    print("Błąd: Wystąpił błąd wejścia/wyjścia.")
+
+
+
